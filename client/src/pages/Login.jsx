@@ -15,7 +15,7 @@ const Login = () => {
 
   const { backendUrl, setIsLoggedin, getUserData } = useContext(AppContent);
 
-  const onSubmiHandler = async (e) => {
+  const onSubmiHandler = async(e) => {
     try {
       e.preventDefault();
 

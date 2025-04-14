@@ -31,7 +31,7 @@ export const register = async (req, res) => {
       });
   
       const mailOptions = {
-        from: process.env.SENDER_EMAIL,
+        from: process.env.SMTP_USER,
         to: email,
         subject: 'Welcome to LOL',
         text: `Welcome to LoL website. Your account has been created with email id: ${email}`,
@@ -40,6 +40,7 @@ export const register = async (req, res) => {
       await transporter.sendMail(mailOptions);
       return res.status(201).json({ success: true }); // 201 Created
     } catch (error) {
+      console.error("EMAIL ERROR:", error);
       res.status(500).json({ success: false, message: error.message });
     }
   };
@@ -100,7 +101,7 @@ export const logout = async (req, res) => {
 // Send the otp to email
 export const sendVerifyOtp = async (req, res) => {
     try {
-      const { userId } = req.body;
+      const userId  = req.userId ;
       const user = await userModel.findById(userId);
   
       if (!user) {
@@ -111,14 +112,16 @@ export const sendVerifyOtp = async (req, res) => {
         return res.status(200).json({ success: true, message: 'Account Already Verified' });
       }
   
-      const otp = String(Math.floor(10000 + Math.random() * 900000));
+      // const otp = String(Math.floor(10000 + Math.random() * 900000));
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
+
       user.verifyOtp = otp;
       user.verifyOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
-  
+      console.log("📧 OTP sent to user:", otp);
       await user.save();
   
       const mailOptions = {
-        from: process.env.SENDER_EMAIL,
+        from: process.env.SMTP_USER,
         to: user.email,
         subject: 'Account Verification OTP',
         text: `Your OTP is ${otp}. Verify your account using this OTP`,
@@ -134,7 +137,10 @@ export const sendVerifyOtp = async (req, res) => {
 
 // Verify the email using OTP
 export const verifyEmail = async (req, res) => {
-    const { userId, otp } = req.body;
+    // const { userId, otp } = req.body;
+    const userId  = req.userId ;
+    console.log('userId' +userId)
+    const { otp } = req.body;
   
     if (!userId || !otp) {
       return res.status(400).json({ success: false, message: 'Missing Details' });
@@ -162,6 +168,7 @@ export const verifyEmail = async (req, res) => {
       await user.save();
       return res.status(200).json({ success: true, message: 'Email verified successfully' });
     } catch (error) {
+      console.log(error)
       return res.status(500).json({ success: false, message: error.message });
     }
   };
@@ -192,14 +199,14 @@ export const sendResetOtp = async (req, res) => {
         return res.status(404).json({ success: false, message: 'User not found' });
       }
   
-      const otp = String(Math.floor(10000 + Math.random() * 900000));
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
       user.resetOtp = otp;
       user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
   
       await user.save();
   
       const mailOptions = {
-        from: process.env.SENDER_EMAIL,
+        from: process.env.SMTP_USER,
         to: user.email,
         subject: 'Password Reset OTP',
         text: `Your OTP for resetting your password is ${otp}. Use this OTP to proceed with resetting your password.`,
@@ -208,6 +215,7 @@ export const sendResetOtp = async (req, res) => {
       await transporter.sendMail(mailOptions);
       return res.status(200).json({ success: true, message: 'OTP Sent to your Email' });
     } catch (error) {
+      console.error("EMAIL ERROR:", error);
       return res.status(500).json({ success: false, message: error.message });
     }
   };
@@ -248,4 +256,5 @@ export const resetPassword = async (req, res) => {
       return res.status(500).json({ success: false, message: error.message });
     }
   };
-  
+
+
