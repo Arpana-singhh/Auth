@@ -14,3 +14,5 @@ server/.env
 .DS_Store
 *.log
 *.env.local
+
+client/.vite/
