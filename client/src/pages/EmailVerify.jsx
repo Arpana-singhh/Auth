@@ -57,6 +57,11 @@ const EmailVerify = () => {
     }
   }
 
+// agar account verified hai to wapas uspe nahi jaa sakte 
+  useEffect(()=>{
+    isLoggedin && userData && userData.isAccountVerified && navigate('/')
+   }, [isLoggedin, userData])
+ 
 
   return (
    <>
@@ -84,7 +89,7 @@ const EmailVerify = () => {
                
               ))}
          </div>
-         <button className="w-full py-3 bg-gradient-to-r from-indigo-500 to-indigo-900 rounded-full"> Verify email</button>
+         <button className="w-full py-3 bg-gradient-to-r from-indigo-500 to-indigo-900 rounded-full text-white"> Verify email</button>
       
       </form>
 
