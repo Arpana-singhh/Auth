@@ -1,0 +1,16 @@
+# Ignore root-level .env if any
+.env
+
+# Ignore node_modules folders
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Ignore env files inside client and server
+client/.env
+server/.env
+
+# Optional OS or IDE files
+.DS_Store
+*.log
+*.env.local
